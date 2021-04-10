@@ -10,7 +10,7 @@ wrongthink chat v2:
 ## credits
 wrongthink.me would not be possible without the following libraries:
 * [TweetNaCl.js (cryptography)](https://github.com/dchest/tweetnacl-js) and [its](https://github.com/dchest/tweetnacl-util-js) [addons](https://github.com/dchest/tweetnacl-auth-js)
-* [double-ratchet (cryptography, made in house!)](https://github.com/parabirb/double-ratchet)
+* [double-ratchet (cryptography, made in house!)](https://github.com/birb-digital/double-ratchet)
 * [MaterializeCSS (UI)](https://github.com/materializecss/materialize)
 * [JQuery (UI)](https://github.com/jquery/jquery)
 * [markdown-it (UI)](https://github.com/markdown-it/markdown-it)
@@ -22,7 +22,7 @@ wrongthink.me would not be possible without the following libraries:
 
 ### this codebase is not audited and you are using this messenger at your own risk.
 
-i do accept vulnerability reports (parabirb@protonmail.ch / @parabirb Twitter / parabirb#9968 Discord) and will patch them ASAP, but i cannot guarantee that wrongthink.me is secure.
+we do accept vulnerability reports (parabirb@protonmail.ch / @parabirb Twitter / parabirb#9968 Discord) and will patch them ASAP, but i cannot guarantee that wrongthink.me is secure.
 
 ## how are things derived
 ### fingerprint
