@@ -7,6 +7,8 @@ wrongthink chat v2:
 * has notifications using MaterializeCSS
 * is verifiable
 
+### IMPORTANT: no warranty is provided with this software. you are using it at your own risk. please see [SECURITY.md](SECURITY.md) for more info
+
 ## credits
 wrongthink.me would not be possible without the following libraries:
 * [TweetNaCl.js (cryptography)](https://github.com/dchest/tweetnacl-js) and [its](https://github.com/dchest/tweetnacl-util-js) [addons](https://github.com/dchest/tweetnacl-auth-js)
@@ -16,13 +18,6 @@ wrongthink.me would not be possible without the following libraries:
 * [markdown-it (UI)](https://github.com/markdown-it/markdown-it)
 * [js-emoji (UI)](https://github.com/iamcal/js-emoji)
 * [twemoji (UI)](https://github.com/twitter/twemoji)
-
-## security
-![threat model](https://raw.githubusercontent.com/parabirb/wrongthink/master/threat%20model.png)
-
-### this codebase is not audited and you are using this messenger at your own risk.
-
-we do accept vulnerability reports (parabirb@protonmail.ch / @parabirb Twitter / parabirb#9968 Discord) and will patch them ASAP, but i cannot guarantee that wrongthink.me is secure.
 
 ## how are things derived
 ### fingerprint
@@ -44,9 +39,4 @@ just open `index.html` in the browser of your choice.
 >implying i give a shit about export regulations
 ```
 
-no warranty is provided with this software and you waive all liability blah blah blah do whatever you want with this software idgaf
-
-## WOKE!!!
-no political pandering will ever take place on the site or in the repo. wrongthink will always be wrongthink and nothing more. i might put some memes on the page from time to time though.
-
-[wrongthink.me will never accept cryptocurrency donations](https://www.schneier.com/blog/archives/2021/04/wtf-signal-adds-cryptocurrency-support.html)
+no warranty is provided with this software. please read [SECURITY.md](SECURITY.md) for more information.
