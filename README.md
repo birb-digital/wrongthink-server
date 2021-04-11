@@ -13,6 +13,7 @@ wrongthink chat v2:
 wrongthink.me would not be possible without the following libraries:
 * [TweetNaCl.js (cryptography)](https://github.com/dchest/tweetnacl-js) and [its](https://github.com/dchest/tweetnacl-util-js) [addons](https://github.com/dchest/tweetnacl-auth-js)
 * [double-ratchet (cryptography, made in house!)](https://github.com/birb-digital/double-ratchet)
+* [DOMPurify (security)](https://github.com/cure53/DOMPurify)
 * [MaterializeCSS (UI)](https://github.com/materializecss/materialize)
 * [JQuery (UI)](https://github.com/jquery/jquery)
 * [markdown-it (UI)](https://github.com/markdown-it/markdown-it)
