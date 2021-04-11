@@ -15,7 +15,9 @@ or parabirb#9968
 <head>
     <meta charset="utf-8">
     <title>wrongthink</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+          crossorigin="anonymous"
+          integrity="sha512-UJfAaOlIRtdR+0P6C3KUoTDAxVTuy3lnSXLyLKlHYJlcSU8Juge/mjeaxDNMlw9LgeIotgz5FP8eUQPhX1q10A==">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <style>
         /* don't screw with the CSS until you have a plan */
@@ -124,11 +126,17 @@ or parabirb#9968
     </div>
 </div>
 <!-- materialize/ui deps -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.0.4/markdown-it.min.js"></script>
-<script src="https://wrongthink.me/emoji.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" crossorigin="anonymous"
+        integrity="sha512-NiWqa2rceHnN3Z5j6mSAvbwwg3tiwVNxiAQaaSMSXnRRDh5C2mk/+sKQRw8qjV1vN4nf8iK2a0b048PnHbyx+Q=="></script>
+<script src="https://twemoji.maxcdn.com/v/13.0.2/twemoji.min.js" crossorigin="anonymous"
+        integrity="sha384-wyB/MspSJ/r2bT2kCj44qtsYRYlpzO2oAPhRj5myrWD63dt6qWv4x8AZe7Fl3K3b"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.0.4/markdown-it.min.js" crossorigin="anonymous"
+        integrity="sha512-0DkA2RqFvfXBVeti0R1l0E8oMkmY0X+bAA2i02Ld8xhpjpvqORUcE/UBe+0KOPzi5iNah0aBpW6uaNNrqCk73Q=="></script>
+<script src="https://cdn.jsdelivr.net/gh/iamcal/js-emoji@9de85bace76f2ed59f425024449af3bc6bcb5650/lib/emoji.min.js"
+        crossorigin="anonymous"
+        integrity="sha384-j986pyUdh7/ymtk8LNJ87w33nucUeFgm0TI/jaDbSorhXfqi2OOzSClw9fwOidZX"></script>
 <!-- security deps -->
 <script src="https://wrongthink.me/nacl-fast.min.js" crossorigin="anonymous"
         integrity="sha384-05+sicyRJQ56XpL4U9HJ8YbtSzFDvAg7apPKOGV6A0JsAJKFM68jp5oLnUjG5mEp"></script>
@@ -138,8 +146,11 @@ or parabirb#9968
         integrity="sha384-qpU3wxGxaAPcz02pOLeZTv5B0rNzsh3CETsUqdHxRBP70bO0kHoBopr+f9AcGj04"></script>
 <script src="https://wrongthink.me/double-ratchet.js" crossorigin="anonymous"
         integrity="sha384-5ZTmjyky8FuzhsXZqu+je0pwJe999QKDi7ThlyXJ+oqluAYFzLs/xwdEV1+Xpm54"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.2.7/purify.min.js" crossorigin="anonymous"
+        integrity="sha512-srKA/HGYuusMcB2uqsvHKmqqE39vHU74WIuPBaKS5+wtfI6NquGXQtby+eM7o139a7Gt3szcHS09wou8GK4IJQ=="></script>
 <!-- networking deps -->
-<script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.3.2/peerjs.min.js" crossorigin="anonymous"
+        integrity="sha512-4wTQ8feow93K3qVGVXUGLULDB9eAULiG+xdbaQH8tYZlXxYv9ij+evblXD0EOqmGWT8NBTd1vQGsURvrQzmKeg=="></script>
 <script>
     // version
     const version = "arachat v2.4.1-wrongthink";
@@ -368,8 +379,8 @@ See /help for help<br></h4>`);
                 } else {
                     // if we've handshaked, decrypt the message
                     let msg = await session.decrypt(data);
-                    // append <anon> parseEmojis(parseMarkdown(sanitizeHtml(message))) to terminal
-                    $("#terminal").append("&lt;anon&gt; " + twemoji.parse(md.render(msg.cleartext)) + "<br>");
+                    // append <anon> msg to terminal
+                    $("#terminal").append("&lt;anon&gt; " + DOMPurify.sanitize(twemoji.parse(md.render(msg.cleartext))) + "<br>");
                     // scroll to bottom of terminal
                     scrollToBottom("terminal");
                 }
@@ -653,8 +664,8 @@ See /help for help<br></h4>`);
         // --- END OF COMMAND CHECK ---
         // if we're not connected, there is no message, or we're not handshaked, do nothing
         if (!connected || msg.join("") === "" || !handshaked) return;
-        // append <you> parseEmojis(parseMarkdown(sanitizeHtml(emojify(message)))) to terminal
-        $("#terminal").append("&lt;you&gt; " + twemoji.parse(md.render(emoji.replace_colons(msg.join(" ")))) + "<br>");
+        // append <you> msg to terminal
+        $("#terminal").append("&lt;you&gt; " + DOMPurify.sanitize(twemoji.parse(md.render(emoji.replace_colons(msg.join(" "))))) + "<br>");
         // scroll terminal to bottom
         scrollToBottom("terminal");
         // encrypt emojify(message)
