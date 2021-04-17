@@ -108,7 +108,7 @@ or parabirb#9968
 </nav>
 <main id="terminal">
     <!-- notice here while the key loads -->
-    Please wait while your Axolotl key generates.<br>
+    Please wait while your NaCl key generates.<br>
 </main>
 <!-- input and changelog -->
 <footer>
@@ -261,18 +261,18 @@ Changing in next release:
             localStorage.setItem("axolotlKey", toHexString(key.secretKey));
             ourKeys.identityKey = key;
             // notify the user
-            M.toast({"html": "Axolotl identity key generated."});
+            M.toast({"html": "Identity key generated."});
         } else {
             // if there's no key, load it
             ourKeys.identityKey = nacl.box.keyPair.fromSecretKey(fromHexString(localStorage.getItem("axolotlKey")));
             // notify the user
-            M.toast({"html": "Axolotl identity key loaded."});
+            M.toast({"html": "Identity key loaded."});
         }
     } else {
         // if there's no storage, generate a new keypair
         ourKeys.identityKey = nacl.box.keyPair();
         // notify the user
-        M.toast({"html": "Axolotl identity key generated."});
+        M.toast({"html": "Identity key generated."});
     }
     // once keys are loaded, set html
     $("#terminal").html(`If you see this, you may not have been able to connect to the PeerJS server.<br>
