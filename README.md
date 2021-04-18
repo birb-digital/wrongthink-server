@@ -9,6 +9,10 @@ wrongthink chat v2:
 
 ### IMPORTANT: no warranty is provided with this software. you are using it at your own risk. please see [SECURITY.md](SECURITY.md) for more info
 
+## use
+* [bleeding edge](https://birb.digital/wrongthink)
+* [stable](https://wrongthink.me)
+
 ## credits
 wrongthink.me would not be possible without the following libraries:
 * [TweetNaCl.js (cryptography)](https://github.com/dchest/tweetnacl-js) and [its](https://github.com/dchest/tweetnacl-util-js) [addons](https://github.com/dchest/tweetnacl-auth-js)
