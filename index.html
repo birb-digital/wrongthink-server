@@ -14,15 +14,20 @@ or parabirb#9968
 
 <head>
     <meta charset="utf-8">
-    <link type="application/json+oembed" href="https://embeds.ga/api/oembed.php?provider_name=&provider_url=&author_name=birb.digital+team&author_url=https%3A%2F%2Fbirb.digital" crossorigin="anonymous">
+    <link type="application/json+oembed"
+          href="https://embeds.ga/api/oembed.php?provider_name=&provider_url=&author_name=birb.digital+team&author_url=https%3A%2F%2Fbirb.digital"
+          crossorigin="anonymous">
     <meta property="og:title" content="wrongthink.me">
     <meta name="twitter:title" content="wrongthink.me">
     <meta name="theme-color" content="#0277bd">
     <meta name="og:image" content="">
     <meta name="twitter:image" content="">
-    <meta property="og:description" content="wrongthink.me is a secure peer-to-peer messenger using PeerJS and a custom double ratchet implementation.">
-    <meta name="description" content="wrongthink.me is a secure peer-to-peer messenger using PeerJS and a custom double ratchet implementation.">
-    <meta property="twitter:description" content="wrongthink.me is a secure peer-to-peer messenger using PeerJS and a custom double ratchet implementation.">
+    <meta property="og:description"
+          content="wrongthink.me is a secure peer-to-peer messenger using PeerJS and a custom double ratchet implementation.">
+    <meta name="description"
+          content="wrongthink.me is a secure peer-to-peer messenger using PeerJS and a custom double ratchet implementation.">
+    <meta property="twitter:description"
+          content="wrongthink.me is a secure peer-to-peer messenger using PeerJS and a custom double ratchet implementation.">
     <title>wrongthink</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
           crossorigin="anonymous"
@@ -337,20 +342,20 @@ See /help for help<br></h4>`);
                     if (inspections) {
                         console.log("Sent:");
                         console.log({
-                            identityKey: ourKeys.identityKey.publicKey,
-                            handshakeKey: ourKeys.handshakeKey.publicKey
+                            identityKey: nacl.util.encodeBase64(ourKeys.identityKey.publicKey),
+                            handshakeKey: nacl.util.encodeBase64(ourKeys.handshakeKey.publicKey)
                         });
                     }
                     // send our identity and handshake key
                     conn.send({
-                        "identityKey": ourKeys.identityKey.publicKey,
-                        "handshakeKey": ourKeys.handshakeKey.publicKey
+                        identityKey: nacl.util.encodeBase64(ourKeys.identityKey.publicKey),
+                        handshakeKey: nacl.util.encodeBase64(ourKeys.handshakeKey.publicKey)
                     });
                     // create a cryptographic session
                     session = new secretSession();
                     // preload the keys
-                    let theirIdentityKey = new Uint8Array(data.identityKey);
-                    let theirHandshakeKey = new Uint8Array(data.handshakeKey);
+                    let theirIdentityKey = nacl.util.decodeBase64(data.identityKey);
+                    let theirHandshakeKey = nacl.util.decodeBase64(data.handshakeKey);
                     // set up session
                     await session.identity(ourKeys.identityKey)
                         .handshake(ourKeys.handshakeKey)
@@ -372,8 +377,8 @@ See /help for help<br></h4>`);
                     // generate new session
                     session = new secretSession();
                     // preload the keys
-                    let theirIdentityKey = new Uint8Array(data.identityKey);
-                    let theirHandshakeKey = new Uint8Array(data.handshakeKey);
+                    let theirIdentityKey = nacl.util.decodeBase64(data.identityKey);
+                    let theirHandshakeKey = nacl.util.decodeBase64(data.handshakeKey);
                     // set up session
                     await session.identity(ourKeys.identityKey)
                         .handshake(ourKeys.handshakeKey)
@@ -406,14 +411,14 @@ See /help for help<br></h4>`);
             if (inspections) {
                 console.log("Sent:");
                 console.log({
-                    identityKey: ourKeys.identityKey.publicKey,
-                    handshakeKey: ourKeys.handshakeKey.publicKey
+                    identityKey: nacl.util.encodeBase64(ourKeys.identityKey.publicKey),
+                    handshakeKey: nacl.util.encodeBase64(ourKeys.handshakeKey.publicKey)
                 });
             }
             // send our identity and handshake keys
             conn.send({
-                identityKey: ourKeys.identityKey.publicKey,
-                handshakeKey: ourKeys.handshakeKey.publicKey
+                identityKey: nacl.util.encodeBase64(ourKeys.identityKey.publicKey),
+                handshakeKey: nacl.util.encodeBase64(ourKeys.handshakeKey.publicKey)
             })
         });
     };
@@ -499,7 +504,7 @@ See /help for help<br></h4>`);
                     // notify user we're connecting
                     M.toast({"html": "Connecting..."});
                     // connect to other peer with fingerprint (make sure it's reliable)
-                    let conn = peer.connect(msg[1], {reliable: true});
+                    let conn = peer.connect(msg[1], {reliable: true, serialization: "json"});
                     // let onConn() handle the connection
                     onConn(conn, true);
                     // clear the message box
