@@ -36,19 +36,44 @@ or parabirb#9968
     <style>
         /* don't screw with the CSS until you have a plan */
 
-        /* helvetica clone (nimbus sans l) and nimbus mono */
         @font-face {
-            font-family: "nimbus-sans";
-            src: url("https://wrongthink.me/nimbus-sans-l.bold.otf") format("opentype");
+            font-family: "San Francisco";
+            font-weight: 100;
+            src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-ultralight-webfont.woff");
         }
 
         @font-face {
-            font-family: "nimbus-sans-text";
-            src: url("https://wrongthink.me/nimbus-sans-l.regular.otf") format("opentype");
+            font-family: "San Francisco";
+            font-weight: 200;
+            src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-thin-webfont.woff");
         }
 
         @font-face {
-            font-family: "nimbus-mono";
+            font-family: "San Francisco";
+            font-weight: 400;
+            src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff");
+        }
+
+        @font-face {
+            font-family: "San Francisco";
+            font-weight: 500;
+            src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-medium-webfont.woff");
+        }
+
+        @font-face {
+            font-family: "San Francisco";
+            font-weight: 600;
+            src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-semibold-webfont.woff");
+        }
+
+        @font-face {
+            font-family: "San Francisco";
+            font-weight: 700;
+            src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-bold-webfont.woff");
+        }
+
+        @font-face {
+            font-family: "Nimbus Mono";
             src: url("https://wrongthink.me/nimbus-mono.bold.otf") format("opentype");
         }
 
@@ -57,16 +82,23 @@ or parabirb#9968
             min-height: 100vh;
             flex-direction: column;
             color: white;
-            font-family: 'nimbus-sans-text', Helvetica, sans-serif;
+            font-family: 'San Francisco', -apple-system, Helvetica, sans-serif;
+            font-weight: 500;
             min-height: 100vh;
         }
 
         strong, b {
-            font-family: 'nimbus-sans', Helvetica, sans-serif;
+            font-family: 'San Francisco', -apple-system, Helvetica, sans-serif;
+            font-weight: 700;
         }
 
         h1, h2, h3, h4, h5, h6, .brand-logo {
-            font-family: 'nimbus-sans';
+            font-family: 'San Francisco', -apple-system, Helvetica, sans-serif;
+            font-weight: 600;
+        }
+
+        .toast {
+            font-weight: 500;
         }
 
         main {
@@ -91,13 +123,13 @@ or parabirb#9968
         }
 
         input {
-            font-family: 'nimbus-sans-text', Helvetica, sans-serif;
+            font-family: 'San Francisco', -apple-system, Helvetica, sans-serif;
         }
 
         textarea,
         code,
         pre {
-            font-family: 'nimbus-mono', monospace;
+            font-family: 'Nimbus Mono', monospace;
         }
 
         img.emoji {
