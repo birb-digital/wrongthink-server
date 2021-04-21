@@ -273,16 +273,16 @@ or parabirb#9968
     // check if storage is available
     if (storageAvailable("localStorage")) {
         // if there's no key, generate one
-        if (!localStorage.getItem("axolotlKey")) {
+        if (!localStorage.getItem("axolotlServerKey")) {
             // generate and save the key
             let key = nacl.box.keyPair();
-            localStorage.setItem("axolotlKey", toHexString(key.secretKey));
+            localStorage.setItem("axolotlServerKey", toHexString(key.secretKey));
             ourKeys.identityKey = key;
             // notify the user
             M.toast({"html": "Identity key generated."});
         } else {
             // if there's no key, load it
-            ourKeys.identityKey = nacl.box.keyPair.fromSecretKey(fromHexString(localStorage.getItem("axolotlKey")));
+            ourKeys.identityKey = nacl.box.keyPair.fromSecretKey(fromHexString(localStorage.getItem("axolotlServerKey")));
             // notify the user
             M.toast({"html": "Identity key loaded."});
         }
@@ -523,7 +523,7 @@ See /help for help<br></h4>`);
                         // initialize the peer again
                         peerInit();
                         // if storage is available, set it
-                        if (storageAvailable("localStorage")) localStorage.setItem("axolotlKey", toHexString(key.secretKey));
+                        if (storageAvailable("localStorage")) localStorage.setItem("axolotlServerKey", toHexString(key.secretKey));
                         // notify user of import
                         M.toast({"html": "Key imported."});
                     } catch (e) {
@@ -542,7 +542,7 @@ See /help for help<br></h4>`);
                     // generate a new keypair
                     let key = nacl.box.keyPair();
                     // if we have localstorage, save it
-                    if (storageAvailable("localStorage")) localStorage.setItem("axolotlKey", toHexString(key.secretKey));
+                    if (storageAvailable("localStorage")) localStorage.setItem("axolotlServerKey", toHexString(key.secretKey));
                     // set the key
                     ourKeys.identityKey = key;
                     // initialize the peer again
