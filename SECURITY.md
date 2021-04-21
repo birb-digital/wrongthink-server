@@ -22,7 +22,7 @@ vulnerabilities in previous versions of wrongthink are low priority and can be r
 
 ## what is a threat and what isn't a threat
 
-we will take anything on crypto or html sanitization flaws.
+we will take anything on crypto.
 
 ## commit signatures
 
