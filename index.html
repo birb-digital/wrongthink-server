@@ -564,7 +564,7 @@ See /help for help<br></h4>`);
                     // if localstorage is available
                     if (storageAvailable("localStorage")) {
                         // if fingerprint was set, set it
-                        if (msg[1]) localStorage.setItem("fingerprint", msg[1]);
+                        if (msg[1]) localStorage.setItem("serverFingerprint", msg[1]);
                         // otherwise, remove it
                         else {
                             localStorage.removeItem("serverFingerprint");
