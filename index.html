@@ -2,8 +2,7 @@
 <html lang="en">
 
 <!--
-ARACHAT
-STANDALONE CLIENT FOR WRONGTHINK2
+STANDALONE SERVER FOR WRONGTHINK2
 Written by hand <3
 (C) 2020 parabirb
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
@@ -17,18 +16,18 @@ or parabirb#9968
     <link type="application/json+oembed"
           href="https://embeds.ga/api/oembed.php?provider_name=&provider_url=&author_name=birb.digital+team&author_url=https%3A%2F%2Fbirb.digital"
           crossorigin="anonymous">
-    <meta property="og:title" content="wrongthink.me">
-    <meta name="twitter:title" content="wrongthink.me">
+    <meta property="og:title" content="wrongthink-server">
+    <meta name="twitter:title" content="wrongthink-server">
     <meta name="theme-color" content="#0277bd">
     <meta name="og:image" content="">
     <meta name="twitter:image" content="">
     <meta property="og:description"
-          content="wrongthink.me is a secure peer-to-peer messenger using PeerJS and a custom double ratchet implementation.">
+          content="wrongthink-server allows users to create end-to-end encrypted chatrooms.">
     <meta name="description"
-          content="wrongthink.me is a secure peer-to-peer messenger using PeerJS and a custom double ratchet implementation.">
+          content="wrongthink-server allows users to create end-to-end encrypted chatrooms.">
     <meta property="twitter:description"
-          content="wrongthink.me is a secure peer-to-peer messenger using PeerJS and a custom double ratchet implementation.">
-    <title>wrongthink</title>
+          content="wrongthink-server allows users to create end-to-end encrypted chatrooms.">
+    <title>wrongthink-server</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
           crossorigin="anonymous"
           integrity="sha512-UJfAaOlIRtdR+0P6C3KUoTDAxVTuy3lnSXLyLKlHYJlcSU8Juge/mjeaxDNMlw9LgeIotgz5FP8eUQPhX1q10A==">
@@ -149,7 +148,7 @@ or parabirb#9968
 <!-- navbar -->
 <nav class="grey darken-3">
     <div class="nav-wrapper">
-        <a href="#" class="brand-logo center">wrongthink</a>
+        <a href="#" class="brand-logo center">wrongthink-server</a>
     </div>
 </nav>
 <main id="terminal">
@@ -160,7 +159,6 @@ or parabirb#9968
 <footer>
     <input id="message" type="text" placeholder="Enter a message or command..." value="" autofocus
            class="grey-text text-lighten-5">
-    <h6 style="text-align: center"><a href="#" onclick="dispChanges()">changelog</a></h6>
 </footer>
 <!-- modal for displaying content -->
 <div id="modal1" class="modal grey darken-4">
@@ -204,18 +202,7 @@ or parabirb#9968
         integrity="sha512-4wTQ8feow93K3qVGVXUGLULDB9eAULiG+xdbaQH8tYZlXxYv9ij+evblXD0EOqmGWT8NBTd1vQGsURvrQzmKeg=="></script>
 <script>
     // version
-    const version = "arachat v2.4.1-wrongthink";
-    // changelog
-    const changelog = `<b>Last changes made ${document.lastModified.split(" ")[0]} - ${version}</b><br><br>
-Changed:
-<ul class="collection">
-<li class="collection-item grey darken-2 grey-text text-lighten-5">Markdown parser (removed HTML support)</li>
-<li class="collection-item grey darken-2 grey-text text-lighten-5">Fonts</li>
-</ul>
-Changing in next release:
-<ul class="collection">
-<li class="collection-item grey darken-2 grey-text text-lighten-5">Tons of stuff ;)</li>
-</ul>`;
+    const version = "wrongthink-server v1.0.0";
 </script>
 <script>
     // check if storage works
@@ -235,17 +222,6 @@ Changing in next release:
                 e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
                 (storage && storage.length !== 0);
         }
-    }
-</script>
-<script>
-    // display changelog
-    function dispChanges() {
-        // set modal header
-        $("#header").html("Changelog");
-        // set modal text
-        $("#text").html(changelog);
-        // open modal
-        $("#modal1").modal("open");
     }
 </script>
 <script>
@@ -278,14 +254,11 @@ Changing in next release:
 </script>
 <script>
     // connection variables
-    let connected = false;
-    let handshaked = false;
-    let connection = null;
     let peer = null;
+    let peers = [];
+    let peerConnected = false;
     // command variables
-    let inspections = false;
     let fingerprint = "";
-    let safetyNumber = "Not calculated yet.";
     // usability variables
     let emoji = new EmojiConvertor();
     emoji.allow_native = true;
@@ -296,7 +269,6 @@ Changing in next release:
         typographer: true
     });
     // cryptography variables
-    let session = {};
     let ourKeys = {};
     // check if storage is available
     if (storageAvailable("localStorage")) {
@@ -331,127 +303,92 @@ Try changing your fingerprint or regenerating your key.`);
     };
     // on connection
     const onConn = (conn, initiator = false) => {
-        // if we're connected already, don't accept
-        if (connected) conn.close();
-        // set initial networking variables
-        handshaked = false;
-        connected = true;
-        connection = conn;
-        // notify the user we're connected
-        M.toast({"html": "Connected."});
-        // generate a keypair for the handshake
-        ourKeys.handshakeKey = nacl.box.keyPair();
-        // when connection closes
+        // create an object for our connection
+        let connObject = {
+            conn,
+            handshaked: false,
+            session: new secretSession(),
+            handshakeKey: {}
+        };
+        // push the connection object to our peer list
+        peers.push(connObject);
+        // on close
         conn.on("close", () => {
-            // reset network and crypto vars
-            connected = false;
-            connection = null;
-            session = {};
-            safetyNumber = "Not calculated yet.";
-            handshaked = false;
-            // clear the terminal
-            $("#terminal").html(`<h4>Welcome to wrongthink2 (${version})<br>
-See /help for help<br></h4>`);
-            // notify user
-            M.toast({"html": "Disconnected."});
-        });
-        // when we receive data
-        conn.on("data", (data) => {
-            // needs to run async for axolotl
-            (async () => {
-                // if inspections are on, log the data
-                if (inspections) {
-                    console.log("Received:");
-                    console.log(data);
-                }
-                /*
-                    handshake:
-                    client -> initiator (handshake key, identity key)
-                    initiator -> client (handshake key, identity key)
-                 */
-                if (!initiator && !handshaked) {
-                    // if inspections are on, log the data
-                    if (inspections) {
-                        console.log("Sent:");
-                        console.log({
-                            identityKey: nacl.util.encodeBase64(ourKeys.identityKey.publicKey),
-                            handshakeKey: nacl.util.encodeBase64(ourKeys.handshakeKey.publicKey)
-                        });
+            // save the fingerprint
+            let fingerprint = connObject.conn.peer;
+            // remove the object
+            peers.splice(peers.indexOf(connObject), 1);
+            // tell everyone
+            peers.forEach(async (peer) => {
+                try {
+                    if (peer.handshaked && peer !== connObject) {
+                        let encrypted = await peer.session.encrypt(`${fingerprint} has left the chat. There are now ${peers.length} people connected.`);
+                        peer.conn.send(encrypted);
                     }
+                } catch (e) {
+                }
+            });
+            $("#terminal").append(DOMPurify.sanitize(`${fingerprint} has left the chat. There are now ${peers.length} people connected.<br>`));
+            scrollToBottom("terminal");
+        });
+        // on data
+        conn.on("data", async (data) => {
+            // we need to try/catch so that a malicious user can't break everything
+            try {
+                if (!connObject.handshaked) {
+                    // set our handshake key
+                    connObject.handshakeKey = nacl.box.keyPair();
                     // send our identity and handshake key
                     conn.send({
                         identityKey: nacl.util.encodeBase64(ourKeys.identityKey.publicKey),
-                        handshakeKey: nacl.util.encodeBase64(ourKeys.handshakeKey.publicKey)
+                        handshakeKey: nacl.util.encodeBase64(connObject.handshakeKey.publicKey)
                     });
-                    // create a cryptographic session
-                    session = new secretSession();
                     // preload the keys
                     let theirIdentityKey = nacl.util.decodeBase64(data.identityKey);
                     let theirHandshakeKey = nacl.util.decodeBase64(data.handshakeKey);
                     // set up session
-                    await session.identity(ourKeys.identityKey)
-                        .handshake(ourKeys.handshakeKey)
+                    await connObject.session.identity(ourKeys.identityKey)
+                        .handshake(connObject.handshakeKey)
                         .theirIdentity(theirIdentityKey)
                         .theirHandshake(theirHandshakeKey)
                         .setRole("receiver")
                         .computeMasterKey();
-                    // set safety number to 16 words (128 bits)
-                    // from nacl.hash(greatestFirstByte, leastFirstByte)
-                    safetyNumber = convertToWords(nacl.hash(new Uint8Array(theirIdentityKey > ourKeys.identityKey.publicKey ?
-                        [...theirIdentityKey, ...ourKeys.identityKey.publicKey] : [...ourKeys.identityKey.publicKey, ...theirIdentityKey]
-                    )).slice(0, 16));
                     // we've handshaked
-                    handshaked = true;
-                    // notify the user
-                    M.toast({"html": "Session is now secure. Check /safety."});
-                } else if (!handshaked) {
-                    // if the above didn't run, we're initiator
-                    // generate new session
-                    session = new secretSession();
-                    // preload the keys
-                    let theirIdentityKey = nacl.util.decodeBase64(data.identityKey);
-                    let theirHandshakeKey = nacl.util.decodeBase64(data.handshakeKey);
-                    // set up session
-                    await session.identity(ourKeys.identityKey)
-                        .handshake(ourKeys.handshakeKey)
-                        .theirIdentity(theirIdentityKey)
-                        .theirHandshake(theirHandshakeKey)
-                        .setRole("initiator")
-                        .computeMasterKey();
-                    // set safety number to 16 words (128 bits)
-                    // from nacl.hash(greatestFirstByte, leastFirstByte)
-                    safetyNumber = convertToWords(nacl.hash(new Uint8Array(theirIdentityKey > ourKeys.identityKey.publicKey ?
-                        [...theirIdentityKey, ...ourKeys.identityKey.publicKey] : [...ourKeys.identityKey.publicKey, ...theirIdentityKey]
-                    )).slice(0, 16));
-                    // we've handshaked
-                    handshaked = true;
-                    // notify the user
-                    M.toast({"html": "Session is now secure. Check /safety."});
+                    connObject.handshaked = true;
+                    // tell everyone
+                    peers.forEach(async (peer) => {
+                        try {
+                            if (peer.handshaked && peer !== connObject) {
+                                let encrypted = await peer.session.encrypt(`${connObject.conn.peer} has joined the chat. There are now ${peers.length} people connected.`);
+                                peer.conn.send(encrypted);
+                            }
+                        } catch (e) {
+                        }
+                    });
+                    $("#terminal").append(DOMPurify.sanitize(`${connObject.conn.peer} has joined the chat. There are now ${peers.length} people connected.<br>`));
+                    scrollToBottom("terminal");
+                    let encrypted = await connObject.session.encrypt(`You have connected to an end-to-end encrypted chatroom hosted with ${version}.<br>The server fingerprint is ${fingerprint}.<br>There ${peers.length !== 2 ? "are" : "is"} ${peers.length - 1} ${peers.length !== 2 ? "people" : "person"} connected.<br>**REMEMBER: THE SERVER OWNER CAN SEE YOUR MESSAGES!**`);
+                    connObject.conn.send(encrypted);
                 } else {
-                    // if we've handshaked, decrypt the message
-                    let msg = await session.decrypt(data);
-                    // append <anon> msg to terminal
-                    $("#terminal").append("&lt;anon&gt; " + DOMPurify.sanitize(twemoji.parse(md.render(msg.cleartext))) + "<br>");
+                    // decrypt the data
+                    const {cleartext} = await connObject.session.decrypt(data);
+                    // send it to each peer
+                    peers.forEach(async (peer) => {
+                        try {
+                            if (peer.handshaked && peer !== connObject) {
+                                let encrypted = await peer.session.encrypt(`&lt;${connObject.conn.peer}&gt; ${cleartext}`);
+                                peer.conn.send(encrypted);
+                            }
+                        } catch (e) {
+                        }
+                    });
+                    // append to term
+                    $("#terminal").append(DOMPurify.sanitize(twemoji.parse(`&lt;${connObject.conn.peer}&gt; ${DOMPurify.sanitize(twemoji.parse(md.render(cleartext)))}`)) + "<br>");
                     // scroll to bottom of terminal
                     scrollToBottom("terminal");
                 }
-            })();
-        });
-        // if we're initiator, we'll need to send our key when the connection opens
-        if (initiator) conn.on("open", () => {
-            // if inspections are on, log the data
-            if (inspections) {
-                console.log("Sent:");
-                console.log({
-                    identityKey: nacl.util.encodeBase64(ourKeys.identityKey.publicKey),
-                    handshakeKey: nacl.util.encodeBase64(ourKeys.handshakeKey.publicKey)
-                });
+            } catch (e) {
             }
-            // send our identity and handshake keys
-            conn.send({
-                identityKey: nacl.util.encodeBase64(ourKeys.identityKey.publicKey),
-                handshakeKey: nacl.util.encodeBase64(ourKeys.handshakeKey.publicKey)
-            })
         });
     };
     // initialize the peer for peerjs
@@ -478,19 +415,24 @@ See /help for help<br></h4>`);
         });
         // when the peer is ready
         peer.on("open", (id) => {
+            peerConnected = true;
             // clear the terminal when open
-            $("#terminal").html(`<h4>Welcome to wrongthink2 (${version})<br>
+            $("#terminal").html(`<h4>Welcome to wrongthink-server (${version})<br>
 See /help for help<br></h4>`);
             // log the fingerprint
             // set modal header
             $("#header").html("Fingerprint")
             // set modal text
-            $("#text").html(`Your fingerprint is: <pre>${id}</pre> Send this to your friend if they want to talk to you.`);
+            $("#text").html(`Your fingerprint is: <pre>${DOMPurify.sanitize(id)}</pre> Send this to people who want to connect to your chatroom.`);
             // display modal
             $("#modal1").modal("open");
         });
+        // when peer closes
+        peer.on("close", () => {
+            peerConnected = false;
+        });
         // on connection, let onConn() handle it
-        peer.on("connection", (conn) => onConn(conn, false));
+        peer.on("connection", (conn) => onConn(conn));
     };
     // if storage is available
     if (storageAvailable("localStorage")) {
@@ -514,31 +456,14 @@ See /help for help<br></h4>`);
                     $("#header").html("Commands");
                     // set modal body html
                     $("#text").html(`/help - Displays help<br>
-/connect (fingerprint) - Connects to peer with specified fingerprint<br>
-/disconnect - Disconnects from other client<br>
 /clear - Clears console<br>
-/safety - Prints safety words.<br>
 /fingerprint - Prints fingerprint.<br>
 /export - Prints private key.<br>
 /import (key) - Imports private key.<br>
 /regenerate - Regenerates private key.<br>
-/custom (fingerprint?) - Sets custom fingerprint. Don't input anything to disable.<br>
-/inspect - Toggles inspections (view what the client sends and receives).<br>
-/verify - Verifies that the peer's fingerprint is valid.`);
+/custom (fingerprint?) - Sets custom fingerprint. Don't input anything to disable.`);
                     // open modal
                     $(".modal").modal("open");
-                    // clear the message box
-                    $("#message").val("");
-                    return;
-                }
-                // connect command
-                case "/connect": {
-                    // notify user we're connecting
-                    M.toast({"html": "Connecting..."});
-                    // connect to other peer with fingerprint (make sure it's reliable)
-                    let conn = peer.connect(msg[1], {reliable: true, serialization: "json"});
-                    // let onConn() handle the connection
-                    onConn(conn, true);
                     // clear the message box
                     $("#message").val("");
                     return;
@@ -546,61 +471,12 @@ See /help for help<br></h4>`);
                 // clear command
                 case "/clear": {
                     // clear the terminal
-                    $("#terminal").html(`<h4>Welcome to wrongthink2 (${version})<br>
+                    $("#terminal").html(`<h4>Welcome to wrongthink-server (${version})<br>
 See /help for help<br></h4>`);
                     // notify the user
                     M.toast({"html": "Cleared console."});
                     // clear the message box
                     $("#message").val("");
-                    return;
-                }
-                // disconnect command
-                case "/disconnect": {
-                    // if we're not connected, don't run
-                    if (!connected) {
-                        // notify user
-                        M.toast({html: "You are not connected."});
-                        return;
-                    }
-                    // close the connection
-                    connection.close();
-                    // clear the message box
-                    $("#message").val("");
-                    return;
-                }
-                // safety word command
-                case "/safety": {
-                    // if we're not connected, don't run
-                    if (!handshaked) {
-                        // notify user
-                        M.toast({html: "Safety words are not available."});
-                        return;
-                    }
-                    // clear the message box
-                    $("#message").val("");
-                    // set modal header html
-                    $("#header").html("Safety words");
-                    // set modal text html
-                    $("#text").html(`Your safety words: <pre>${safetyNumber}</pre> Make sure your safety words match before chatting!`);
-                    // open the modal
-                    $("#modal1").modal("open");
-                    return;
-                }
-                // verification command
-                case "/verify": {
-                    // if we're not connected, don't run
-                    if (!handshaked) {
-                        // notify user
-                        M.toast({html: "Verification is not possible."});
-                        return;
-                    }
-                    // clear the message box
-                    $("#message").val("");
-                    // display the result
-                    M.toast({
-                        // our calculated fingerprint                                                           eq. peer's fingerprint
-                        "html": convertToWords(nacl.hash(session.theirIdentityKey).slice(0, 8)).replace(/ /g, "-") === connection.peer ? "Fingerprint verified." : "Could not verify fingerprint."
-                    });
                     return;
                 }
                 // fingerprint command
@@ -611,7 +487,7 @@ See /help for help<br></h4>`);
                     // set modal header
                     $("#header").html("Fingerprint")
                     // set modal text
-                    $("#text").html(`Your fingerprint is: <pre>${fingerprint}</pre> Send this to your friend if they want to talk to you.`);
+                    $("#text").html(`Your fingerprint is: <pre>${DOMPurify.sanitize(fingerprint)}</pre> Send this to people who want to connect to your chatroom.`);
                     // display modal
                     $("#modal1").modal("open");
                     return;
@@ -700,34 +576,27 @@ See /help for help<br></h4>`);
                     M.toast({"html": (msg[1] ? "Set" : "Unset") + " custom fingerprint."});
                     return;
                 }
-                // debug command
-                case "/inspect": {
-                    // clear the message box
-                    $("#message").val("");
-                    // toggle the inspections variable
-                    inspections = !inspections;
-                    // notify the user
-                    M.toast({"html": (inspections ? "Enabled" : "Disabled") + " inspections."});
-                    return;
-                }
             }
         }
         // --- END OF COMMAND CHECK ---
-        // if we're not connected, there is no message, or we're not handshaked, do nothing
-        if (!connected || msg.join("") === "" || !handshaked) return;
+        // if we aren't connected
+        if (!peerConnected) return;
         // append <you> msg to terminal
-        $("#terminal").append("&lt;you&gt; " + DOMPurify.sanitize(twemoji.parse(md.render(emoji.replace_colons(msg.join(" "))))) + "<br>");
+        $("#terminal").append("<b>server</b>: " + DOMPurify.sanitize(twemoji.parse(md.render(emoji.replace_colons(msg.join(" "))))) + "<br>");
         // scroll terminal to bottom
         scrollToBottom("terminal");
-        // encrypt emojify(message)
-        let encrypted = await session.encrypt(emoji.replace_colons(msg.join(" ")));
-        // if inspections are on, log the message
-        if (inspections) {
-            console.log("Sent:");
-            console.log(encrypted);
-        }
-        // send the encrypted message
-        connection.send(encrypted);
+        // create cleartext
+        let cleartext = emoji.replace_colons(msg.join(" "));
+        // send it to each peer
+        peers.forEach(async (peer) => {
+            try {
+                if (peer.handshaked) {
+                    let encrypted = await peer.session.encrypt(`**server**: ${cleartext}`);
+                    peer.conn.send(encrypted);
+                }
+            } catch (e) {
+            }
+        });
         // clear the message box
         $("#message").val("");
     };
