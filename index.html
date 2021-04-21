@@ -398,8 +398,8 @@ Try changing your fingerprint or regenerating your key.`);
             // fingerprint is first 10 digits of hash of the public key
             // TODO: make command to verify fingerprints
             if (storageAvailable("localStorage")) {
-                if (localStorage.getItem("fingerprint")) {
-                    fingerprint = localStorage.getItem("fingerprint");
+                if (localStorage.getItem("serverFingerprint")) {
+                    fingerprint = localStorage.getItem("serverFingerprint");
                     return;
                 }
             }
@@ -437,7 +437,7 @@ See /help for help<br></h4>`);
     // if storage is available
     if (storageAvailable("localStorage")) {
         // if there's a custom fingerprint saved, init peer with the fingerprint
-        if (localStorage.getItem("fingerprint")) peerInit(localStorage.getItem("fingerprint"));
+        if (localStorage.getItem("serverFingerprint")) peerInit(localStorage.getItem("serverFingerprint"));
         // otherwise, init it without
         else peerInit();
     } else peerInit();
@@ -567,7 +567,7 @@ See /help for help<br></h4>`);
                         if (msg[1]) localStorage.setItem("fingerprint", msg[1]);
                         // otherwise, remove it
                         else {
-                            localStorage.removeItem("fingerprint");
+                            localStorage.removeItem("serverFingerprint");
                             // if localstorage exists we init here
                             peerInit();
                         }
