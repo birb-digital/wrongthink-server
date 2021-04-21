@@ -1,6 +1,6 @@
 # wrongthink-server
 wrongthink-server is:
-* transit-encrypted
+* transit-encrypted (while all messages are encrypted, the server owner can read them)
 * decentralized, self-hosted
 * simple
 and it works with existing versions of wrongthink (ANY version which uses the double ratchet!)
