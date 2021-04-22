@@ -322,7 +322,7 @@ Try changing your fingerprint or regenerating your key.`);
             peers.forEach(async (peer) => {
                 try {
                     if (peer.handshaked && peer !== connObject) {
-                        let encrypted = await peer.session.encrypt(`${fingerprint} has left the chat. There are now ${peers.length} people connected.`);
+                        let encrypted = await peer.session.encrypt(`${fingerprint} has left the chat. There ${peers.length !== 2 ? "are" : "is"} now ${peers.length - 1} ${peers.length !== 2 ? "people" : "person"} connected.`);
                         peer.conn.send(encrypted);
                     }
                 } catch (e) {
@@ -359,7 +359,7 @@ Try changing your fingerprint or regenerating your key.`);
                     peers.forEach(async (peer) => {
                         try {
                             if (peer.handshaked && peer !== connObject) {
-                                let encrypted = await peer.session.encrypt(`${connObject.conn.peer} has joined the chat. There are now ${peers.length} people connected.`);
+                                let encrypted = await peer.session.encrypt(`${connObject.conn.peer} has joined the chat. There ${peers.length !== 2 ? "are" : "is"} now ${peers.length - 1} ${peers.length !== 2 ? "people" : "person"} connected.`);
                                 peer.conn.send(encrypted);
                             }
                         } catch (e) {
