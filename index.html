@@ -580,7 +580,7 @@ See /help for help<br></h4>`);
         }
         // --- END OF COMMAND CHECK ---
         // if we aren't connected
-        if (!peerConnected) return;
+        if (!peerConnected || msg.join("") === "") return;
         // append <you> msg to terminal
         $("#terminal").append("<b>server</b>: " + DOMPurify.sanitize(twemoji.parse(md.render(emoji.replace_colons(msg.join(" "))))) + "<br>");
         // scroll terminal to bottom
