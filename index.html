@@ -411,7 +411,14 @@ Try changing your fingerprint or regenerating your key.`);
         peer = new Peer(fingerprint, {
             "host": "wrongthink.me",
             "port": 8080,
-            "secure": true
+            "secure": true,
+            "config": {
+                "iceServers": [{
+                    "urls": "turn:wrongthink.me:6969",
+                    "username": "wrongthinkclient",
+                    "credential": "cbc6fc16-f27d-4b46-8fc6-ca326e2c527e"
+                }]
+            }
         });
         // when the peer is ready
         peer.on("open", (id) => {
